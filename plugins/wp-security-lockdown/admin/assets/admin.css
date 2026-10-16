@@ -1,0 +1,93 @@
+/* WP Security Lockdown dashboard. Everything is scoped under .wp-security-lockdown. */
+
+.wp-security-lockdown .wpsl-banner {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left-width: 4px;
+	margin: 16px 0;
+	padding: 4px 16px 8px;
+}
+.wp-security-lockdown .wpsl-banner.wpsl-ok { border-left-color: #00a32a; }
+.wp-security-lockdown .wpsl-banner.wpsl-warn { border-left-color: #dba617; }
+.wp-security-lockdown .wpsl-banner.wpsl-bad { border-left-color: #d63638; }
+.wp-security-lockdown .wpsl-banner-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+
+.wp-security-lockdown .wpsl-tiles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	list-style: none;
+	margin: 0 0 16px;
+	padding: 0;
+}
+.wp-security-lockdown .wpsl-tiles li {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	min-width: 130px;
+	padding: 8px 14px;
+}
+.wp-security-lockdown .wpsl-tiles strong { display: block; font-size: 22px; line-height: 1.2; }
+
+.wp-security-lockdown .wpsl-badge {
+	border: 1px solid transparent;
+	border-radius: 3px;
+	display: inline-block;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.6;
+	padding: 0 8px;
+	white-space: nowrap;
+}
+.wp-security-lockdown .wpsl-badge.wpsl-ok { background: #edfaef; border-color: #00a32a; color: #005c12; }
+.wp-security-lockdown .wpsl-badge.wpsl-warn { background: #fcf9e8; border-color: #dba617; color: #614200; }
+.wp-security-lockdown .wpsl-badge.wpsl-bad { background: #fcf0f1; border-color: #d63638; color: #8a2424; }
+.wp-security-lockdown .wpsl-badge.wpsl-info { background: #f0f6fc; border-color: #72aee6; color: #0a4b78; }
+.wp-security-lockdown .wpsl-badge.wpsl-off { background: #f0f0f1; border-color: #c3c4c7; color: #50575e; }
+
+.wp-security-lockdown .wpsl-tag {
+	background: #f0f0f1;
+	border: 1px solid #c3c4c7;
+	border-radius: 3px;
+	color: #3c434a;
+	font-size: 11px;
+	margin-left: 4px;
+	padding: 0 6px;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.wp-security-lockdown .wpsl-actions form { display: inline-block; margin: 0 16px 8px 0; vertical-align: top; }
+.wp-security-lockdown .wpsl-actions .description { display: block; margin-top: 4px; max-width: 420px; }
+
+.wp-security-lockdown .wpsl-control {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	margin: 16px 0;
+	padding: 0 16px 16px;
+}
+.wp-security-lockdown .wpsl-control header { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+.wp-security-lockdown .wpsl-control h2 { margin: 14px 0 8px; padding: 0; }
+
+.wp-security-lockdown .wpsl-table th[scope="row"] { width: 230px; }
+.wp-security-lockdown .wpsl-table td p { margin: 0 0 6px; }
+.wp-security-lockdown .wpsl-table td p:last-child { margin-bottom: 0; }
+
+.wp-security-lockdown .wpsl-plain { list-style: disc; margin: 0; padding-left: 18px; }
+.wp-security-lockdown .wpsl-legend { list-style: none; margin: 0; padding: 0; }
+.wp-security-lockdown .wpsl-legend li { margin: 6px 0; }
+.wp-security-lockdown .wpsl-recovery li { margin-bottom: 8px; }
+.wp-security-lockdown .wpsl-todo { color: #1d2327; }
+
+.wp-security-lockdown .wpsl-code {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	overflow: auto;
+	padding: 8px 12px;
+}
+.wp-security-lockdown details { margin: 8px 0; }
+.wp-security-lockdown details > summary { cursor: pointer; font-weight: 600; }
+
+@media screen and (max-width: 782px) {
+	.wp-security-lockdown .wpsl-table th[scope="row"] { width: auto; }
+	.wp-security-lockdown .wpsl-tiles li { flex: 1 1 40%; }
+}
