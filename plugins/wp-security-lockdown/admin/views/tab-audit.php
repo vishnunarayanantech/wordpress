@@ -23,6 +23,7 @@ use WP_Security_Lockdown\Admin\Presenter;
 <?php if ( empty( $view['entries'] ) ) : ?>
 	<p><?php esc_html_e( 'No events have been recorded yet.', 'wp-security-lockdown' ); ?></p>
 <?php else : ?>
+	<div class="wpsl-scroll">
 	<table class="widefat striped wpsl-table">
 		<caption class="screen-reader-text"><?php esc_html_e( 'Audit log, newest first', 'wp-security-lockdown' ); ?></caption>
 		<thead><tr>
@@ -45,4 +46,5 @@ use WP_Security_Lockdown\Admin\Presenter;
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 <?php endif; ?>

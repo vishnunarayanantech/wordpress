@@ -129,6 +129,7 @@ foreach ( $view['plugin']->state()->verification() as $wpsl_v ) {
 <?php if ( ! $wpsl_attention ) : ?>
 	<p><?php esc_html_e( 'Nothing needs attention among the enabled controls.', 'wp-security-lockdown' ); ?></p>
 <?php else : ?>
+	<div class="wpsl-scroll">
 	<table class="widefat striped wpsl-table">
 		<caption class="screen-reader-text"><?php esc_html_e( 'Controls that need attention', 'wp-security-lockdown' ); ?></caption>
 		<thead><tr>
@@ -156,6 +157,7 @@ foreach ( $view['plugin']->state()->verification() as $wpsl_v ) {
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 <?php endif; ?>
 
 <h2><?php esc_html_e( 'Open findings outside the plugin\'s reach', 'wp-security-lockdown' ); ?></h2>

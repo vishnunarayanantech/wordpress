@@ -31,6 +31,7 @@ $wpsl_sync_text   = array(
 <?php if ( empty( $view['ledger'] ) ) : ?>
 	<p><?php esc_html_e( 'The plugin currently owns no persistent setting.', 'wp-security-lockdown' ); ?></p>
 <?php else : ?>
+	<div class="wpsl-scroll">
 	<table class="widefat striped wpsl-table">
 		<caption class="screen-reader-text"><?php esc_html_e( 'Options changed by the plugin', 'wp-security-lockdown' ); ?></caption>
 		<thead><tr>
@@ -52,6 +53,7 @@ $wpsl_sync_text   = array(
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 
 	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="wpsl-rollback">
 		<input type="hidden" name="action" value="wp_security_lockdown_rollback" />
@@ -69,6 +71,7 @@ $wpsl_sync_text   = array(
 
 <?php if ( ! empty( $view['detail']['results'] ) ) : ?>
 	<h3><?php esc_html_e( 'Result of the last rollback', 'wp-security-lockdown' ); ?></h3>
+	<div class="wpsl-scroll">
 	<table class="widefat striped wpsl-table">
 		<thead><tr>
 			<th scope="col"><?php esc_html_e( 'Option', 'wp-security-lockdown' ); ?></th>
@@ -83,12 +86,14 @@ $wpsl_sync_text   = array(
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 	<?php if ( ! empty( $view['detail']['disabled'] ) ) : ?>
 		<p><?php echo esc_html( sprintf( /* translators: %s: control identifiers. */ __( 'Controls switched off in the policy: %s', 'wp-security-lockdown' ), implode( ', ', array_map( 'sanitize_key', $view['detail']['disabled'] ) ) ) ); ?></p>
 	<?php endif; ?>
 <?php endif; ?>
 
 <h2><?php esc_html_e( 'What happens when you deactivate or uninstall', 'wp-security-lockdown' ); ?></h2>
+<div class="wpsl-scroll">
 <table class="widefat striped wpsl-table">
 	<tbody>
 		<tr>
@@ -105,6 +110,7 @@ $wpsl_sync_text   = array(
 		</tr>
 	</tbody>
 </table>
+</div>
 
 <h2><?php esc_html_e( 'Recovery if the plugin ever locks you out or breaks the site', 'wp-security-lockdown' ); ?></h2>
 <p><?php esc_html_e( 'These work without the dashboard. Use the first one that applies:', 'wp-security-lockdown' ); ?></p>

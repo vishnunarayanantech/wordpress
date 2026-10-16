@@ -235,6 +235,92 @@ class Test_Login_Protection extends Test_Case {
 		$this->assertSame( 'proxy_header_unusable', $this->plugin->state()->get( 'proxy_degraded' )['reason'] );
 	}
 
+	/**
+	 * Declares a trusted proxy the way the settings screen does, then rebuilds the plugin like the next request would.
+	 */
+	private function declare_proxy( $header ) {
+		$this->plugin->settings()->update(
+			array(
+				'login' => array(
+					'trusted_proxies' => '10.0.0.5',
+					'proxy_header'    => $header,
+				),
+			)
+		);
+		$this->reload_plugin();
+		$this->configure();
+	}
+
+	public function test_a_degraded_record_still_counts_while_the_proxy_settings_are_unchanged() {
+		$this->new_client( '10.0.0.5', array( 'HTTP_X_FORWARDED_FOR' => '203.0.113.9' ) );
+		$this->fail_times( 3 );
+
+		// The administrator's own request comes from a public address and is not degraded, but visitors behind the proxy are.
+		$this->new_client( '198.51.100.10' );
+		$report = $this->login_module()->report()['login_limiter'];
+		$this->assertSame( 'partial', $report['state'], 'Earlier evidence that the limiter is not counting must not be forgotten while nothing was fixed.' );
+		$this->assertStringContainsString( 'not configured as trusted', $report['failure_reason'], 'The explanation must match what was observed.' );
+	}
+
+	public function test_a_degraded_record_made_before_the_proxy_settings_changed_is_not_blamed_on_the_new_setup() {
+		$this->new_client( '10.0.0.5', array( 'HTTP_X_FORWARDED_FOR' => '203.0.113.9' ) );
+		$this->fail_times( 3 );
+		$this->assertSame( 'partial', $this->login_module()->report()['login_limiter']['state'] );
+
+		$this->declare_proxy( 'X-Forwarded-For' );
+		$this->new_client( '198.51.100.10' );
+
+		$this->assertSame( 'enforced', $this->login_module()->report()['login_limiter']['state'], 'The record describes a configuration that no longer exists; the dashboard must not keep warning about it.' );
+	}
+
+	public function test_a_missing_header_record_is_dropped_when_the_header_setting_changes() {
+		$this->declare_proxy( 'X-Forwarded-For' );
+		$this->new_client( '10.0.0.5' );
+		$this->fail_times( 3 );
+
+		$this->new_client( '198.51.100.10' );
+		$report = $this->login_module()->report()['login_limiter'];
+		$this->assertSame( 'partial', $report['state'] );
+		$this->assertStringContainsString( 'configured trusted proxy', $report['failure_reason'] );
+
+		$this->declare_proxy( 'CF-Connecting-IP' );
+		$this->new_client( '198.51.100.10' );
+		$this->assertSame( 'enforced', $this->login_module()->report()['login_limiter']['state'] );
+	}
+
+	public function test_a_degraded_record_without_a_scope_from_an_older_version_is_ignored() {
+		$this->plugin->state()->set(
+			'proxy_degraded',
+			array(
+				'time'   => time(),
+				'reason' => 'proxy_header_unusable',
+			)
+		);
+		$this->new_client( '198.51.100.10' );
+		$this->assertSame( 'enforced', $this->login_module()->report()['login_limiter']['state'] );
+	}
+
+	public function test_noting_a_degraded_proxy_is_throttled_per_configuration() {
+		$state = $this->plugin->state();
+		$old   = time() - 600;
+		$state->set(
+			'proxy_degraded',
+			array(
+				'time'   => $old,
+				'reason' => 'unconfigured_proxy',
+				'scope'  => 'aaaa',
+			)
+		);
+
+		$state->note_proxy_degraded( 'unconfigured_proxy', 'aaaa' );
+		$this->assertSame( $old, $state->get( 'proxy_degraded' )['time'], 'The same observation within the hour is not written again.' );
+
+		$state->note_proxy_degraded( 'unconfigured_proxy', 'bbbb' );
+		$noted = $state->get( 'proxy_degraded' );
+		$this->assertSame( 'bbbb', $noted['scope'], 'A new configuration is recorded immediately.' );
+		$this->assertGreaterThan( $old, $noted['time'] );
+	}
+
 	public function test_a_visitor_with_a_public_address_is_limited_even_if_a_proxy_header_is_present_but_untrusted() {
 		$this->new_client( '198.51.100.10', array( 'HTTP_CF_CONNECTING_IP' => '9.9.9.9' ) );
 		$this->fail_times( 5 );

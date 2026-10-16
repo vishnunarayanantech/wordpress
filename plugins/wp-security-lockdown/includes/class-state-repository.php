@@ -128,12 +128,14 @@ class State_Repository {
 	 * Records that a request was attributed to a shared proxy address (login limiter fails open).
 	 *
 	 * @param string $reason Reason code.
+	 * @param string $scope  Identifies the proxy configuration in force. A record made under one
+	 *                       configuration is not blamed on a later one (see Login_Protection).
 	 * @return void
 	 */
-	public function note_proxy_degraded( $reason ) {
+	public function note_proxy_degraded( $reason, $scope = '' ) {
 		$seen = $this->get( 'proxy_degraded' );
 		// At most one write per hour: this runs on login attempts and must stay cheap.
-		if ( isset( $seen['time'] ) && ( time() - (int) $seen['time'] ) < HOUR_IN_SECONDS && ( $seen['reason'] ?? '' ) === $reason ) {
+		if ( isset( $seen['time'] ) && ( time() - (int) $seen['time'] ) < HOUR_IN_SECONDS && ( $seen['reason'] ?? '' ) === $reason && ( $seen['scope'] ?? '' ) === $scope ) {
 			return;
 		}
 		$this->set(
@@ -141,6 +143,7 @@ class State_Repository {
 			array(
 				'time'   => time(),
 				'reason' => (string) $reason,
+				'scope'  => (string) $scope,
 			)
 		);
 	}

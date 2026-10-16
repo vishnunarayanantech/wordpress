@@ -30,6 +30,7 @@ use WP_Security_Lockdown\Policy_Manager;
 		</header>
 		<p><?php echo esc_html( $wpsl_report['description'] ); ?></p>
 
+		<div class="wpsl-scroll">
 		<table class="widefat striped wpsl-table">
 			<tbody>
 				<tr>
@@ -113,10 +114,12 @@ use WP_Security_Lockdown\Policy_Manager;
 				<?php endif; ?>
 			</tbody>
 		</table>
+		</div>
 
 		<?php if ( $wpsl_report['details'] ) : ?>
 			<details>
 				<summary><?php esc_html_e( 'Sub-checks', 'wp-security-lockdown' ); ?></summary>
+				<div class="wpsl-scroll">
 				<table class="widefat striped wpsl-table">
 					<tbody>
 					<?php foreach ( $wpsl_report['details'] as $wpsl_detail ) : ?>
@@ -128,6 +131,7 @@ use WP_Security_Lockdown\Policy_Manager;
 					<?php endforeach; ?>
 					</tbody>
 				</table>
+				</div>
 			</details>
 		<?php endif; ?>
 	</section>

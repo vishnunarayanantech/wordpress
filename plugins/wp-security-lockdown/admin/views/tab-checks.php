@@ -79,6 +79,7 @@ foreach ( $view['reports'] as $wpsl_report ) {
 	}
 	?>
 	<h2><?php echo esc_html( $wpsl_label ); ?></h2>
+	<div class="wpsl-scroll">
 	<table class="widefat striped wpsl-table">
 		<caption class="screen-reader-text"><?php echo esc_html( $wpsl_label ); ?></caption>
 		<thead><tr>
@@ -104,6 +105,7 @@ foreach ( $view['reports'] as $wpsl_report ) {
 		<?php endforeach; ?>
 		</tbody>
 	</table>
+	</div>
 <?php endforeach; ?>
 
 <?php if ( '' !== $wpsl_snippets['apache'] ) : ?>
@@ -131,6 +133,7 @@ foreach ( $view['reports'] as $wpsl_report ) {
 <?php endif; ?>
 
 <h2><?php esc_html_e( 'What a plugin can and cannot enforce', 'wp-security-lockdown' ); ?></h2>
+<div class="wpsl-scroll">
 <table class="widefat striped wpsl-table">
 	<thead><tr>
 		<th scope="col"><?php esc_html_e( 'Protection', 'wp-security-lockdown' ); ?></th>
@@ -149,3 +152,4 @@ foreach ( $view['reports'] as $wpsl_report ) {
 		<tr><td><?php esc_html_e( 'Network-level blocking of repeat attackers', 'wp-security-lockdown' ); ?></td><td><?php esc_html_e( 'fail2ban, a WAF or the CDN.', 'wp-security-lockdown' ); ?></td></tr>
 	</tbody>
 </table>
+</div>

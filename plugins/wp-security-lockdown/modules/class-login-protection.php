@@ -159,6 +159,16 @@ class Login_Protection extends Abstract_Module {
 	}
 
 	/**
+	 * Fingerprint of the settings that decide how a client address is derived.
+	 *
+	 * @return string
+	 */
+	private function proxy_scope() {
+		$s = $this->plugin->settings();
+		return substr( md5( (string) wp_json_encode( array( $s->get( 'login.trusted_proxies', array() ), $s->get( 'login.proxy_header', '' ) ) ) ), 0, 12 );
+	}
+
+	/**
 	 * Who is making this request, and may they be rate limited at all?
 	 *
 	 * @return array array( limit => bool, why => string, key => string, ip => string ).
@@ -188,7 +198,7 @@ class Login_Protection extends Abstract_Module {
 		}
 		if ( $client['degraded'] ) {
 			// Many visitors share this address: punishing it would punish everyone. Fail open, loudly.
-			$this->plugin->state()->note_proxy_degraded( (string) $client['reason'] );
+			$this->plugin->state()->note_proxy_degraded( (string) $client['reason'], $this->proxy_scope() );
 			$this->subject['why'] = (string) $client['reason'];
 			return $this->subject;
 		}
@@ -472,16 +482,19 @@ class Login_Protection extends Abstract_Module {
 			'text'   => sprintf( '%d / %d', $snapshot['tracked'], $snapshot['locked'] ),
 		);
 
+		// Visitors can be degraded while this (administrator) request is not, so earlier evidence counts, but only
+		// for the proxy settings in force now: once they change, the old record describes a setup that is gone.
 		$seen     = $this->plugin->state()->get( 'proxy_degraded' );
-		$recent   = isset( $seen['time'] ) && ( time() - (int) $seen['time'] ) < WEEK_IN_SECONDS;
+		$recent   = isset( $seen['time'] ) && ( time() - (int) $seen['time'] ) < WEEK_IN_SECONDS && ( $seen['scope'] ?? '' ) === $this->proxy_scope();
 		$degraded = $client['degraded'] || $recent;
+		$reason   = $client['degraded'] ? $client['reason'] : ( $seen['reason'] ?? '' );
 
 		if ( ! $attached ) {
 			$report['state']          = self::STATE_FAILED;
 			$report['failure_reason'] = __( 'The login hooks are not attached in this request.', 'wp-security-lockdown' );
 		} elseif ( $degraded ) {
 			$report['state']          = self::STATE_PARTIAL;
-			$report['failure_reason'] = 'proxy_header_unusable' === ( $client['reason'] ?? ( $seen['reason'] ?? '' ) )
+			$report['failure_reason'] = 'proxy_header_unusable' === $reason
 				? __( 'A configured trusted proxy did not supply a usable client address header, so visitors would share one address. The limiter is NOT counting failures for those requests.', 'wp-security-lockdown' )
 				: __( 'Requests arrive from a private address with forwarding headers, i.e. behind a reverse proxy that is not configured as trusted. All visitors would share one address, so the limiter is NOT counting failures. Configure your trusted proxies in the policy settings.', 'wp-security-lockdown' );
 			$report['manual_action']  = __( 'Declare your reverse proxy / CDN ranges and client-IP header under Login protection.', 'wp-security-lockdown' );

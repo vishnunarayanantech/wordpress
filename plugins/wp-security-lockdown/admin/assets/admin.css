@@ -68,9 +68,15 @@
 .wp-security-lockdown .wpsl-control header { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
 .wp-security-lockdown .wpsl-control h2 { margin: 14px 0 8px; padding: 0; }
 
+/* A table wider than the screen scrolls inside its own box instead of stretching the whole page on a phone. */
+.wp-security-lockdown .wpsl-scroll { overflow-x: auto; }
+
 .wp-security-lockdown .wpsl-table th[scope="row"] { width: 230px; }
 .wp-security-lockdown .wpsl-table td p { margin: 0 0 6px; }
 .wp-security-lockdown .wpsl-table td p:last-child { margin-bottom: 0; }
+
+/* Core caps selects at 25rem, which cuts the option labels of the policy dropdowns off. */
+.wp-security-lockdown .form-table select { max-width: 100%; }
 
 .wp-security-lockdown .wpsl-plain { list-style: disc; margin: 0; padding-left: 18px; }
 .wp-security-lockdown .wpsl-legend { list-style: none; margin: 0; padding: 0; }

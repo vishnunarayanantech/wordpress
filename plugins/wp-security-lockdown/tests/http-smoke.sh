@@ -7,6 +7,11 @@
 # The optional lockout test (WPSL_LOCKOUT=1) deliberately locks the address you run it from for the
 # configured lockout time (default 15 minutes).
 #
+# The "login errors" check makes two failed logins, and the limiter counts failures per client address
+# across runs. Running the script three times inside one counting window (default 15 minutes) therefore
+# locks the address before that check and makes it fail. That is the limiter working, not a bug: wait for
+# the lock to expire or use "Clear login lockouts" on the dashboard Overview before running it again.
+#
 # Usage:
 #   WPSL_BASE=http://127.0.0.1:8099 \
 #   WPSL_ADMIN_USER=admin WPSL_ADMIN_PASS=... \
