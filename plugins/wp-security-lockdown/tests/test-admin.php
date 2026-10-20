@@ -517,7 +517,7 @@ class Test_Admin extends Test_Case {
 		);
 		$this->assertSame( 'restricted', $clean['rest']['mode'] );
 		$this->assertSame( array( 'contact-form-7/v1' ), $clean['rest']['public_namespaces'] );
-		$this->assertSame( 5, $clean['login']['max_attempts'], 'A non-numeric value falls back to the default.' );
+		$this->assertSame( 3, $clean['login']['max_attempts'], 'A non-numeric value falls back to the default.' );
 		$this->assertSame( array( '1.2.3.4' ), $clean['login']['allowlist'] );
 		$this->assertSame( '', $clean['login']['proxy_header'] );
 

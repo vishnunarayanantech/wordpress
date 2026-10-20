@@ -37,7 +37,26 @@ class Test_Login_Protection extends Test_Case {
 		);
 		$_SERVER['REMOTE_ADDR'] = '198.51.100.10';
 		unset( $_SERVER['HTTP_X_FORWARDED_FOR'], $GLOBALS['pagenow'] );
-		$this->configure();
+		// The shipped defaults are deliberately strict (3 attempts, 24 h, 64 characters); these tests exercise the
+		// mechanisms with a moderate policy and test_shipped_defaults_are_the_strict_policy() pins the defaults.
+		$this->configure(
+			array(
+				'login' => array(
+					'max_attempts'        => 5,
+					'window'              => 900,
+					'lockout'             => 900,
+					'min_password_length' => 12,
+				),
+			)
+		);
+	}
+
+	public function test_shipped_defaults_are_the_strict_policy() {
+		$defaults = \WP_Security_Lockdown\Settings_Repository::defaults()['login'];
+		$this->assertSame( 3, $defaults['max_attempts'] );
+		$this->assertSame( DAY_IN_SECONDS, $defaults['window'] );
+		$this->assertSame( DAY_IN_SECONDS, $defaults['lockout'] );
+		$this->assertSame( 64, $defaults['min_password_length'] );
 	}
 
 	public function tear_down() {

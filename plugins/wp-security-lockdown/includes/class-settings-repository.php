@@ -97,14 +97,14 @@ class Settings_Repository {
 			),
 			'login'      => array(
 				'limiter'             => true,
-				'max_attempts'        => 5,
-				'window'              => 900,
-				'lockout'             => 900,
+				'max_attempts'        => 3,
+				'window'              => 86400,
+				'lockout'             => 86400,
 				'allowlist'           => array(),
 				'trusted_proxies'     => array(),
 				'proxy_header'        => '',
 				'generic_errors'      => true,
-				'min_password_length' => 12,
+				'min_password_length' => 64,
 			),
 			'disclosure' => array(
 				'author_enumeration' => true,
@@ -293,9 +293,9 @@ class Settings_Repository {
 
 		$out['login'] = array(
 			'limiter'             => self::to_bool( $pick( 'login', 'limiter' ) ),
-			'max_attempts'        => self::clamp_int( $pick( 'login', 'max_attempts' ), 3, 20, 5 ),
-			'window'              => self::clamp_int( $pick( 'login', 'window' ), 60, DAY_IN_SECONDS, 900 ),
-			'lockout'             => self::clamp_int( $pick( 'login', 'lockout' ), 60, DAY_IN_SECONDS, 900 ),
+			'max_attempts'        => self::clamp_int( $pick( 'login', 'max_attempts' ), 3, 20, 3 ),
+			'window'              => self::clamp_int( $pick( 'login', 'window' ), 60, DAY_IN_SECONDS, DAY_IN_SECONDS ),
+			'lockout'             => self::clamp_int( $pick( 'login', 'lockout' ), 60, DAY_IN_SECONDS, DAY_IN_SECONDS ),
 			'allowlist'           => $this->sanitize_ip_list( $pick( 'login', 'allowlist' ), 'allowlist', $notices ),
 			'trusted_proxies'     => $this->sanitize_ip_list( $pick( 'login', 'trusted_proxies' ), 'trusted proxy', $notices ),
 			'proxy_header'        => '',
@@ -359,7 +359,7 @@ class Settings_Repository {
 	 */
 	private function sanitize_min_password_length( $value ) {
 		if ( ! is_numeric( $value ) ) {
-			return 12;
+			return 64;
 		}
 		$value = (int) $value;
 		return $value <= 0 ? 0 : (int) max( 8, min( 64, $value ) );

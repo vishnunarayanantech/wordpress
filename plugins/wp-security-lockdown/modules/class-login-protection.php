@@ -137,9 +137,9 @@ class Login_Protection extends Abstract_Module {
 		if ( null === $this->limiter ) {
 			$s             = $this->plugin->settings();
 			$this->limiter = new Rate_Limiter(
-				(int) $s->get( 'login.max_attempts', 5 ),
-				(int) $s->get( 'login.window', 900 ),
-				(int) $s->get( 'login.lockout', 900 )
+				(int) $s->get( 'login.max_attempts', 3 ),
+				(int) $s->get( 'login.window', DAY_IN_SECONDS ),
+				(int) $s->get( 'login.lockout', DAY_IN_SECONDS )
 			);
 		}
 		return $this->limiter;

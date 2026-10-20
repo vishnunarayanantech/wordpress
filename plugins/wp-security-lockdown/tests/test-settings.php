@@ -17,7 +17,10 @@ class Test_Settings extends Test_Case {
 		$this->assertSame( 'block', $s->get( 'xmlrpc.mode' ) );
 		$this->assertSame( 'restricted', $s->get( 'rest.mode' ) );
 		$this->assertTrue( $s->get( 'login.limiter' ) );
-		$this->assertSame( 5, $s->get( 'login.max_attempts' ) );
+		$this->assertSame( 3, $s->get( 'login.max_attempts' ) );
+		$this->assertSame( DAY_IN_SECONDS, $s->get( 'login.window' ) );
+		$this->assertSame( DAY_IN_SECONDS, $s->get( 'login.lockout' ) );
+		$this->assertSame( 64, $s->get( 'login.min_password_length' ) );
 		$this->assertSame( array(), $s->get( 'login.trusted_proxies' ), 'No proxy is trusted unless the administrator says so.' );
 		$this->assertSame( '', $s->get( 'login.proxy_header' ) );
 		$this->assertFalse( $s->get( 'lifecycle.rollback_on_deactivation' ), 'Deactivation must not undo anything by default.' );
@@ -50,7 +53,7 @@ class Test_Settings extends Test_Case {
 		$this->assertSame( 'block', $s->get( 'xmlrpc.mode' ) );
 		$this->assertSame( 20, $s->get( 'login.max_attempts' ), 'Clamped to the maximum.' );
 		$this->assertSame( 60, $s->get( 'login.window' ), 'Clamped to the minimum.' );
-		$this->assertSame( 900, $s->get( 'login.lockout' ), 'Non-numeric falls back to the default.' );
+		$this->assertSame( DAY_IN_SECONDS, $s->get( 'login.lockout' ), 'Non-numeric falls back to the default.' );
 		$this->assertSame( 8, $s->get( 'login.min_password_length' ), 'A positive length below 8 is raised to 8.' );
 		$this->assertArrayNotHasKey( 'unknown', get_option( Settings_Repository::OPTION ) );
 	}
@@ -117,7 +120,7 @@ class Test_Settings extends Test_Case {
 			update_option( Settings_Repository::OPTION, $bad );
 			$this->plugin->settings()->flush_cache();
 			$this->assertSame( 'restricted', $this->plugin->settings()->get( 'rest.mode' ) );
-			$this->assertSame( 5, $this->plugin->settings()->get( 'login.max_attempts' ) );
+			$this->assertSame( 3, $this->plugin->settings()->get( 'login.max_attempts' ) );
 		}
 	}
 
